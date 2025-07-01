@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reserva Barbero a Domicilio</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#121212">
+  <title>Reservas - Barbero a Domicilio</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -17,99 +15,263 @@
       --shadow: rgba(0,0,0,0.7);
       --radius: 12px;
     }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:var(--bg);font-family:'Poppins',sans-serif;color:var(--text);padding:1rem;}
-    .card{position:relative;width:360px;padding:2rem;background:var(--card);border-radius:var(--radius);backdrop-filter:blur(10px);box-shadow:0 8px 16px var(--shadow);animation:fadeIn 0.6s ease-out;}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-    h1{text-align:center;margin-bottom:1rem;color:var(--accent);font-weight:600;letter-spacing:1px;}
-    .fav-btn{position:absolute;top:1rem;right:1rem;background:transparent;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-sec);transition:color .2s;}
-    .fav-btn.active{color:gold;}
-    .field{margin-bottom:1rem;}
-    label{display:block;margin-bottom:.5rem;font-size:.9rem;color:var(--text-sec);}
-    input,select,textarea{width:100%;padding:.75rem;border:none;border-radius:8px;background:rgba(255,255,255,0.05);color:var(--text);font-size:.95rem;box-shadow:inset 0 2px 4px rgba(0,0,0,0.6);transition:background .2s,box-shadow .2s;}
-    input::placeholder,textarea::placeholder{color:var(--text-sec);}
-    input:focus,select:focus,textarea:focus{outline:none;background:rgba(255,255,255,0.1);box-shadow:0 0 0 2px var(--accent);}
-    .surcharge{display:flex;align-items:center;gap:.5rem;}
-    .surcharge input{transform:scale(1.2);}
-    .btn{width:100%;padding:.75rem;background:linear-gradient(90deg,#00e5ff,#00a8ff);color:#121212;font-weight:600;border:none;border-radius:var(--radius);cursor:pointer;box-shadow:0 6px 10px var(--shadow);transition:transform .2s,box-shadow .2s;}
-    .btn:disabled{opacity:.5;cursor:not-allowed;}
-    .btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 16px var(--shadow);}
-    #summary{margin-top:1.5rem;padding:1rem;background:rgba(255,255,255,0.05);border-radius:var(--radius);font-size:.95rem;line-height:1.4;white-space:pre-wrap;}
-    .hidden{display:none;}
-    .error{border:1px solid #f66;}
-    .error-msg{color:#f66;font-size:.8rem;margin-top:.25rem;}
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { display:flex; justify-content:center; align-items:center; min-height:100vh; background:var(--bg); font-family:'Poppins',sans-serif; color:var(--text); padding:1rem; }
+    .card { position:relative; width:360px; padding:2rem; background:var(--card); border-radius:var(--radius); backdrop-filter:blur(10px); box-shadow:0 8px 16px var(--shadow); animation:fadeIn 0.6s ease-out; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+    .lang-switch { position:absolute; top:1rem; right:1rem; display:flex; gap:0.25rem; }
+    .lang-btn { background:transparent; border:none; color:var(--text-sec); cursor:pointer; font-size:0.9rem; transition:color 0.2s; }
+    .lang-btn.active { color:var(--accent); text-decoration:underline; }
+    h1 { text-align:center; margin-bottom:1rem; color:var(--accent); font-weight:600; letter-spacing:1px; }
+    .field { margin-bottom:1rem; }
+    label { display:block; margin-bottom:0.5rem; font-size:0.9rem; color:var(--text-sec); }
+    input, select, textarea { width:100%; padding:0.75rem; border:none; border-radius:8px; background:rgba(255,255,255,0.05); color:var(--text); font-size:0.95rem; box-shadow:inset 0 2px 4px rgba(0,0,0,0.6); transition:background 0.2s,box-shadow 0.2s; }
+    input::placeholder, textarea::placeholder { color:var(--text-sec); }
+    input:focus, select:focus, textarea:focus { outline:none; background:rgba(255,255,255,0.1); box-shadow:0 0 0 2px var(--accent); }
+    .surcharge { display:flex; align-items:center; gap:0.5rem; }
+    .surcharge input { transform:scale(1.2); }
+    .btn { width:100%; padding:0.75rem; background:var(--accent); color:var(--bg); border:none; border-radius:var(--radius); font-weight:600; cursor:pointer; box-shadow:0 6px 10px var(--shadow); transition:transform 0.2s,box-shadow 0.2s; }
+    .btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 10px 14px var(--shadow); }
+    #summary { margin-top:1.5rem; padding:1rem; background:rgba(255,255,255,0.05); border-radius:var(--radius); font-size:0.95rem; line-height:1.4; white-space:pre-wrap; }
+    .hidden { display:none; }
   </style>
 </head>
 <body>
   <div class="card">
-    <button class="fav-btn" id="fav-btn" aria-label="Marcar favorito">☆</button>
-    <h1>Reserva tu Servicio</h1>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="es">ES</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+      <button class="lang-btn" data-lang="fr">FR</button>
+      <button class="lang-btn" data-lang="it">IT</button>
+    </div>
+    <h1 id="title">Reserva tu Servicio</h1>
     <form id="booking-form" novalidate>
       <div class="field">
-        <label for="service">Servicio</label>
-        <select id="service" required>
-          <option value="" disabled selected>-- Elige Servicio --</option>
-          <option value="Cortar">Cortar - 12,00€</option>
-          <option value="Tinte">Tinte desde 10,00€</option>
-          <option value="Mechas">Mechas desde 10,00€</option>
-          <option value="Afeitar">Afeitar - 8,00€</option>
-          <option value="Alisado">Alisado desde 10,00€</option>
-          <option value="Niños">Niños - 10,00€</option>
-        </select>
-        <div class="error-msg hidden" id="error-service">Seleccione un servicio</div>
+        <label for="service" id="label-service">Servicio</label>
+        <select id="service" required></select>
       </div>
       <div class="field">
-        <label for="date">Fecha</label>
-        <input type="date" id="date" required min="" />
-        <div class="error-msg hidden" id="error-date">Fecha inválida</div>
+        <label for="date" id="label-date">Fecha</label>
+        <input type="date" id="date" required />
       </div>
       <div class="field">
-        <label for="time">Hora</label>
+        <label for="time" id="label-time">Hora</label>
         <input type="time" id="time" required min="09:00" max="22:00" step="900" />
-        <div class="error-msg hidden" id="error-time">Hora fuera de rango (09:00-22:00)</div>
       </div>
       <div class="field">
-        <label for="name">Nombre</label>
-        <input type="text" id="name" placeholder="Tu nombre" required />
-        <div class="error-msg hidden" id="error-name">Ingrese su nombre</div>
+        <label for="name" id="label-name">Nombre</label>
+        <input type="text" id="name" required />
       </div>
       <div class="field">
-        <label for="phone">Teléfono</label>
-        <input type="tel" id="phone" placeholder="+34 600 000 000" required />
-        <div class="error-msg hidden" id="error-phone">Formato: +34 9 dígitos</div>
+        <label for="phone" id="label-phone">Teléfono</label>
+        <input type="tel" id="phone" required />
       </div>
       <div class="field surcharge">
         <input type="checkbox" id="plus-travel" />
-        <label for="plus-travel">Plus desplazamiento en Palma (+30,00€)</label>
+        <label for="plus-travel" id="label-plus">Plus desplazamiento en Palma (+30,00€)</label>
       </div>
       <button type="submit" class="btn" id="btn-generate" disabled>Ver Resumen</button>
     </form>
-    <div id="summary" class="hidden" role="region" aria-live="polite"></div>
+    <div id="summary" class="hidden"></div>
     <button id="btn-send" class="btn hidden">Enviar por WhatsApp</button>
   </div>
   <script>
-    // Setup
-    const priceMap={Cortar:12,Tinte:10,Mechas:10,Afeitar:8,Alisado:10,'Niños':10};
-    const form=document.getElementById('booking-form');
-    const btnGen=document.getElementById('btn-generate'), btnSend=document.getElementById('btn-send');
-    const summaryEl=document.getElementById('summary');
-    const serviceEl=document.getElementById('service'), dateEl=document.getElementById('date'), timeEl=document.getElementById('time'), nameEl=document.getElementById('name'), phoneEl=document.getElementById('phone'), plusEl=document.getElementById('plus-travel');
-    const errors={service:'error-service',date:'error-date',time:'error-time',name:'error-name',phone:'error-phone'};
-    // Fecha mínima
-    dateEl.min=new Date().toISOString().split('T')[0];
-    // Favorito
-    const favKey='fav';
-    const favBtn=document.getElementById('fav-btn');
-    function loadFav(){const f=JSON.parse(localStorage.getItem(favKey));if(f){serviceEl.value=f.service;dateEl.value=f.date;timeEl.value=f.time;nameEl.value=f.name;phoneEl.value=f.phone;plusEl.checked=f.plus;favBtn.classList.add('active');}}
-    favBtn.addEventListener('click',()=>{if(favBtn.classList.toggle('active')){localStorage.setItem(favKey,JSON.stringify({service:serviceEl.value,date:dateEl.value,time:timeEl.value,name:nameEl.value,phone:phoneEl.value,plus:plusEl.checked}));}else localStorage.removeItem(favKey);});
-    // Validación inline
-    function validateField(el,validator,id){const valid=validator(el.value);el.classList.toggle('error',!valid);document.getElementById(id).classList.toggle('hidden',valid);return valid;}
-    function validateForm(){const vService=validateField(serviceEl,v=>!!v,errors.service);const vDate=validateField(dateEl,v=>v>=dateEl.min,errors.date);const vTime=validateField(timeEl,v=>v>=timeEl.min&&v<=timeEl.max,errors.time);const vName=validateField(nameEl,v=>v.trim(),errors.name);const vPhone=validateField(phoneEl,v=>/^\+34\s?\d{9}$/.test(v),errors.phone);btnGen.disabled=!(vService&&vDate&&vTime&&vName&&vPhone);} 
-    [serviceEl,dateEl,timeEl,nameEl,phoneEl].forEach(el=>el.addEventListener('input',validateForm));
-    // Submit
-    form.addEventListener('submit',e=>{e.preventDefault();const s=serviceEl.value,d=dateEl.value,t=timeEl.value,n=nameEl.value,p=phoneEl.value,pl=plusEl.checked;let price=priceMap[s]||0;if(pl)price+=30;const txt=`Resumen de la Reserva:\n- Servicio: ${s}\n- Fecha: ${d}\n- Hora: ${t}\n- Desplazamiento en Palma: ${pl?'Sí (+30,00€)':'No'}\n- Precio estimado: ${price.toFixed(2)}€\n- Nombre: ${n}\n- Teléfono: ${p}`;summaryEl.textContent=txt;summaryEl.classList.remove('hidden');btnSend.classList.remove('hidden');});
-    btnSend.addEventListener('click',()=>{const p=phoneEl.value.replace(/\s+/g,'');window.open(`https://wa.me/${p}?text=${encodeURIComponent(summaryEl.textContent)}`,'_blank');});
-    loadFav();
+    const translations = {
+      es: {
+        title: 'Reserva tu Servicio',
+        serviceLabel: 'Servicio',
+        servicePlaceholder: '-- Elige Servicio --',
+        services: [
+          {v:'Cortar', l:'Cortar - 12,00€'},
+          {v:'Tinte', l:'Tinte desde 10,00€'},
+          {v:'Mechas', l:'Mechas desde 10,00€'},
+          {v:'Afeitar', l:'Afeitar - 8,00€'},
+          {v:'Alisado', l:'Alisado desde 10,00€'},
+          {v:'Niños', l:'Niños - 10,00€'}
+        ],
+        date: 'Fecha',
+        time: 'Hora',
+        nameLabel: 'Nombre',
+        namePlaceholder: 'Tu nombre',
+        phoneLabel: 'Teléfono',
+        phonePlaceholder: '+34 600 000 000',
+        plus: 'Plus desplazamiento en Palma (+30,00€)',
+        btnGenerate: 'Ver Resumen',
+        btnSend: 'Enviar por WhatsApp',
+        summaryPrefix: 'Buenos días, ¿sería posible reservar?:'
+      },
+      en: {
+        title: 'Book Your Service',
+        serviceLabel: 'Service',
+        servicePlaceholder: '-- Choose Service --',
+        services: [
+          {v:'Cut', l:'Cut - €12.00'},
+          {v:'Dye', l:'Dye from €10.00'},
+          {v:'Highlights', l:'Highlights from €10.00'},
+          {v:'Shave', l:'Shave - €8.00'},
+          {v:'Straighten', l:'Straighten from €10.00'},
+          {v:'Kids', l:'Kids - €10.00'}
+        ],
+        date: 'Date',
+        time: 'Time',
+        nameLabel: 'Name',
+        namePlaceholder: 'Your name',
+        phoneLabel: 'Phone',
+        phonePlaceholder: '+34 600 000 000',
+        plus: 'Travel surcharge in Palma (+€30.00)',
+        btnGenerate: 'View Summary',
+        btnSend: 'Send via WhatsApp',
+        summaryPrefix: 'Good morning, would it be possible to book?:'
+      },
+      de: {
+        title: 'Buche deinen Service',
+        serviceLabel: 'Service',
+        servicePlaceholder: '-- Service wählen --',
+        services: [
+          {v:'Haarschnitt', l:'Haarschnitt - 12,00€'},
+          {v:'Färben', l:'Färben ab 10,00€'},
+          {v:'Strähnen', l:'Strähnen ab 10,00€'},
+          {v:'Rasur', l:'Rasur - 8,00€'},
+          {v:'Glätten', l:'Glätten ab 10,00€'},
+          {v:'Kinder', l:'Kinder - 10,00€'}
+        ],
+        date: 'Datum',
+        time: 'Uhrzeit',
+        nameLabel: 'Name',
+        namePlaceholder: 'Ihr Name',
+        phoneLabel: 'Telefon',
+        phonePlaceholder: '+34 600 000 000',
+        plus: 'Anfahrtszuschlag Palma (+30,00€)',
+        btnGenerate: 'Zusammenfassung',
+        btnSend: 'Per WhatsApp senden',
+        summaryPrefix: 'Guten Morgen, wäre es möglich zu buchen?:'
+      },
+      fr: {
+        title: 'Réservez votre service',
+        serviceLabel: 'Service',
+        servicePlaceholder: '-- Choisir un service --',
+        services: [
+          {v:'Coupe', l:'Coupe - 12,00€'},
+          {v:'Coloration', l:'Coloration dès 10,00€'},
+          {v:'Mèches', l:'Mèches dès 10,00€'},
+          {v:'Rasage', l:'Rasage - 8,00€'},
+          {v:'Lissage', l:'Lissage dès 10,00€'},
+          {v:'Enfants', l:'Enfants - 10,00€'}
+        ],
+        date: 'Date',
+        time: 'Heure',
+        nameLabel: 'Nom',
+        namePlaceholder: 'Votre nom',
+        phoneLabel: 'Téléphone',
+        phonePlaceholder: '+34 600 000 000',
+        plus: 'Supplément déplacement Palma (+30,00€)',
+        btnGenerate: 'Voir le résumé',
+        btnSend: 'Envoyer sur WhatsApp',
+        summaryPrefix: 'Bonjour, serait-il possible de réserver?:'
+      },
+      it: {
+        title: 'Prenota il tuo servizio',
+        serviceLabel: 'Servizio',
+        servicePlaceholder: '-- Scegli servizio --',
+        services: [
+          {v:'Taglio', l:'Taglio - 12,00€'},
+          {v:'Colorazione', l:'Colorazione da 10,00€'},
+          {v:'Meches', l:'Meches da 10,00€'},
+          {v:'Rasatura', l:'Rasatura - 8,00€'},
+          {v:'Lisciatura', l:'Lisciatura da 10,00€'},
+          {v:'Bambini', l:'Bambini - 10,00€'}
+        ],
+        date: 'Data',
+        time: 'Ora',
+        nameLabel: 'Nome',
+        namePlaceholder: 'Il tuo nome',
+        phoneLabel: 'Telefono',
+        phonePlaceholder: '+34 600 000 000',
+        plus: 'Supplemento trasferta Palma (+30,00€)',
+        btnGenerate: 'Visualizza riepilogo',
+        btnSend: 'Invia su WhatsApp',
+        summaryPrefix: 'Buongiorno, sarebbe possibile prenotare?:'
+      }
+    };
+    // Elementos
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const titleEl = document.getElementById('title');
+    const serviceEl = document.getElementById('service');
+    const dateEl = document.getElementById('date');
+    const timeEl = document.getElementById('time');
+    const nameEl = document.getElementById('name');
+    const phoneEl = document.getElementById('phone');
+    const labelService = document.getElementById('label-service');
+    const labelDate = document.getElementById('label-date');
+    const labelTime = document.getElementById('label-time');
+    const labelName = document.getElementById('label-name');
+    const labelPhone = document.getElementById('label-phone');
+    const labelPlus = document.getElementById('label-plus');
+    const btnGen = document.getElementById('btn-generate');
+    const btnSend = document.getElementById('btn-send');
+    const summaryEl = document.getElementById('summary');
+    let currentLang = 'es';
+    function applyLang() {
+      const t = translations[currentLang];
+      titleEl.textContent = t.title;
+      labelService.textContent = t.serviceLabel;
+      serviceEl.innerHTML = `<option value="" disabled selected>${t.servicePlaceholder}</option>` +
+        t.services.map(s => `<option value="${s.v}">${s.l}</option>`).join('');
+      labelDate.textContent = t.date;
+      labelTime.textContent = t.time;
+      labelName.textContent = t.nameLabel;
+      nameEl.placeholder = t.namePlaceholder;
+      labelPhone.textContent = t.phoneLabel;
+      phoneEl.placeholder = t.phonePlaceholder;
+      labelPlus.textContent = t.plus;
+      btnGen.textContent = t.btnGenerate;
+      btnSend.textContent = t.btnSend;
+    }
+    langBtns.forEach(btn => btn.addEventListener('click', () => {
+      langBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentLang = btn.dataset.lang;
+      document.documentElement.lang = currentLang;
+      applyLang();
+      validate();
+      summaryEl.classList.add('hidden');
+      btnSend.classList.add('hidden');
+    }));
+    applyLang();
+    // Fecha mínima hoy
+    dateEl.min = new Date().toISOString().split('T')[0];
+    // Precios
+    const priceMap = { Cortar:12, Tinte:10, Mechas:10, Afeitar:8, Alisado:10, Niños:10, Cut:12, Dye:10, Highlights:10, Shave:8, Straighten:10, Kids:10, Haarschnitt:12, Färben:10, Strähnen:10, Rasur:8, Glätten:10, Kinder:10, Coupe:12, Coloration:10, Mèches:10, Rasage:8, Lissage:10, Enfants:10, Taglio:12, Colorazione:10, Meches:10, Rasatura:8, Lisciatura:10, Bambini:10 };
+    // Validación
+    function validate() {
+      const valid = serviceEl.value && dateEl.value && timeEl.value && nameEl.value.trim() && /^\+34\s?\d{9}$/.test(phoneEl.value);
+      btnGen.disabled = !valid;
+    }
+    [serviceEl, dateEl, timeEl, nameEl, phoneEl].forEach(el => el.addEventListener('input', validate));
+    // Generar resumen
+    document.getElementById('booking-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const s = serviceEl.value;
+      const d = dateEl.value;
+      const tm = timeEl.value;
+      const n = nameEl.value.trim();
+      const p = phoneEl.value.trim();
+      const pl = document.getElementById('plus-travel').checked;
+      let price = priceMap[s] || 0;
+      if (pl) price += 30;
+      const prefix = translations[currentLang].summaryPrefix;
+      const summaryText = `${prefix}\n- Servicio: ${s}\n- Fecha: ${d}\n- Hora: ${tm}\n- Desplazamiento en Palma: ${pl?'Sí (+30,00€)':'No'}\n- Precio estimado: ${price.toFixed(2)}€\n- Nombre: ${n}\n- Teléfono: ${p}`;
+      summaryEl.textContent = summaryText;
+      summaryEl.classList.remove('hidden');
+      btnSend.classList.remove('hidden');
+    });
+    // Enviar por WhatsApp
+    btnSend.addEventListener('click', () => {
+      const phoneNum = phoneEl.value.replace(/\s+/g, '');
+      window.open(`https://wa.me/${phoneNum}?text=${encodeURIComponent(summaryEl.textContent)}`,'_blank');
+    });
   </script>
 </body>
 </html>
