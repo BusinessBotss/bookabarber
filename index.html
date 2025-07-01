@@ -114,7 +114,7 @@
       </div>
       <div class="field surcharge">
         <input type="checkbox" id="plus-travel" />
-        <label for="plus-travel">Plus desplazamiento (+5,00€)</label>
+        <label for="plus-travel">Plus desplazamiento (+30,00€)</label>
       </div>
       <button type="submit" class="btn" id="btn-generate">Ver Resumen</button>
     </form>
@@ -149,7 +149,7 @@
       const phone = phoneEl.value.trim();
       const plus = plusTravel.checked;
       let price = priceMap[service] || 0;
-      if (plus) price += 5;
+      if (plus) price += 30;
 
       const summary =
 `Resumen de la Reserva:
