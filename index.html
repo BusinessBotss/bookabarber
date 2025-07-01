@@ -26,11 +26,21 @@
       width: 360px; background: var(--card);
       border-radius: var(--radius); padding: 2rem;
       box-shadow: 0 8px 16px var(--shadow);
+      position: relative;
     }
     h1 {
-      text-align: center; margin-bottom: 1.5rem;
+      text-align: center; margin-bottom: 1rem;
       color: var(--accent); font-weight: 600;
     }
+    /* Favorito */
+    .fav-btn {
+      position: absolute; top: 1rem; right: 1rem;
+      background: transparent; border: none;
+      font-size: 1.5rem; cursor: pointer;
+      color: var(--text-sec);
+      transition: color 0.2s;
+    }
+    .fav-btn.active { color: gold; }
     .field { margin-bottom: 1rem; }
     label {
       display: block; margin-bottom: 0.5rem;
@@ -52,9 +62,7 @@
     .surcharge {
       display: flex; align-items: center; gap: 0.5rem;
     }
-    .surcharge input {
-      width: auto; transform: scale(1.2);
-    }
+    .surcharge input { width: auto; transform: scale(1.2); }
     .btn {
       width: 100%; padding: 0.75rem;
       background: var(--accent); color: var(--bg);
@@ -63,13 +71,8 @@
       box-shadow: 0 6px 10px var(--shadow);
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 14px var(--shadow);
-    }
-    .btn:disabled {
-      opacity: 0.5; cursor: not-allowed;
-    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 14px var(--shadow); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     #summary {
       margin-top: 1.5rem; padding: 1rem;
       background: rgba(255,255,255,0.05);
@@ -82,6 +85,7 @@
 </head>
 <body>
   <div class="card">
+    <button class="fav-btn" id="fav-btn" aria-label="Marcar favorito">☆</button>
     <h1>Reserva tu Servicio</h1>
     <form id="booking-form">
       <div class="field">
@@ -114,7 +118,7 @@
       </div>
       <div class="field surcharge">
         <input type="checkbox" id="plus-travel" />
-        <label for="plus-travel">Plus desplazamiento (+30,00€)</label>
+        <label for="plus-travel">Plus desplazamiento en Palma (+30,00€)</label>
       </div>
       <button type="submit" class="btn" id="btn-generate">Ver Resumen</button>
     </form>
@@ -123,40 +127,70 @@
   </div>
 
   <script>
-    // Inicializar fecha mínima a hoy
-    const dateInput = document.getElementById('date');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
-
-    // Precios base
+    // Variables principales
     const priceMap = { Cortar:12, Tinte:10, Mechas:10, Afeitar:8, Alisado:10, "Niños":10 };
     const form = document.getElementById('booking-form');
     const btnGenerate = document.getElementById('btn-generate');
     const btnSend = document.getElementById('btn-send');
     const summaryEl = document.getElementById('summary');
     const serviceEl = document.getElementById('service');
+    const dateEl = document.getElementById('date');
+    const timeEl = document.getElementById('time');
     const nameEl = document.getElementById('name');
     const phoneEl = document.getElementById('phone');
     const plusTravel = document.getElementById('plus-travel');
-    const timeEl = document.getElementById('time');
+    const favBtn = document.getElementById('fav-btn');
 
+    // Fecha mínima = hoy
+    const today = new Date().toISOString().split('T')[0];
+    dateEl.min = today;
+
+    // Cargar favorito
+    const fav = JSON.parse(localStorage.getItem('fav')); 
+    if(fav) {
+      serviceEl.value = fav.service;
+      dateEl.value = fav.date;
+      timeEl.value = fav.time;
+      nameEl.value = fav.name;
+      phoneEl.value = fav.phone;
+      plusTravel.checked = fav.plus;
+      favBtn.classList.add('active');
+    }
+
+    // Favorito
+    favBtn.addEventListener('click', () => {
+      if(favBtn.classList.toggle('active')) {
+        localStorage.setItem('fav', JSON.stringify({
+          service: serviceEl.value,
+          date: dateEl.value,
+          time: timeEl.value,
+          name: nameEl.value,
+          phone: phoneEl.value,
+          plus: plusTravel.checked
+        }));
+      } else {
+        localStorage.removeItem('fav');
+      }
+    });
+
+    // Generar resumen
     form.addEventListener('submit', e => {
       e.preventDefault();
       const service = serviceEl.value;
-      const date = dateInput.value;
+      const date = dateEl.value;
       const time = timeEl.value;
       const name = nameEl.value.trim();
       const phone = phoneEl.value.trim();
       const plus = plusTravel.checked;
       let price = priceMap[service] || 0;
-      if (plus) price += 30;
+      if(plus) price += 30;
 
       const summary =
 `Resumen de la Reserva:
 - Servicio: ${service}
 - Fecha: ${date}
 - Hora: ${time}
-- Desplazamiento: ${plus ? 'Sí (+5,00€)' : 'No'}
+- Desplazamiento en Palma: ${plus ? 'Sí (+30,00€)' : 'No'}
 - Precio estimado: ${price.toFixed(2)}€
 - Nombre: ${name}
 - Teléfono: ${phone}`;
@@ -165,6 +199,7 @@
       btnSend.classList.remove('hidden');
     });
 
+    // Enviar por WhatsApp
     btnSend.addEventListener('click', () => {
       const phone = phoneEl.value.replace(/\s+/g, '');
       const text = encodeURIComponent(summaryEl.textContent);
