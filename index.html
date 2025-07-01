@@ -1,153 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barbero a Domicilio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reservas - Barbero a Domicilio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
-    /* Temas */
-    :root[data-theme='dark'] { --bg: #000; --text: #fff; --field-bg: rgba(255,255,255,0.1); --border: rgba(255,255,255,0.3); }
-    :root[data-theme='light'] { --bg: #fff; --text: #000; --field-bg: rgba(0,0,0,0.05); --border: rgba(0,0,0,0.2); }
+    :root {
+      --bg: #121212;
+      --card: #1e1e1e;
+      --accent: #f5f5f5;
+      --text: #e0e0e0;
+      --text-sec: #8b949e;
+      --shadow: rgba(0,0,0,0.7);
+      --radius: 12px;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); }
-    a { color: var(--text); text-decoration: none; }
-    button, input, select, textarea { font-family: inherit; }
-
-    .container { width: 90%; max-width: 400px; margin: 2rem auto; display: flex; flex-direction: column; align-items: stretch; animation: fadeInUp 0.6s ease-out; }
-    nav { margin-bottom: 1rem; text-align: center; }
-    .lang-btn, #theme-toggle { background: transparent; border: none; color: var(--text); margin: 0 4px; font-weight: 600; cursor: pointer; }
-    .lang-btn.active { text-decoration: underline; }
-
-    form[role='form'] { display: flex; flex-direction: column; }
-    label { font-weight: 600; margin-bottom: 0.25rem; }
-    .field { margin-bottom: 1rem; position: relative; }
-    select, input, textarea { width: 100%; background: var(--field-bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; color: var(--text); }
-    textarea { resize: vertical; min-height: 80px; }
-    .tooltip { position: absolute; top: 100%; left: 0; font-size: 0.8rem; opacity: 0.7; margin-top: 0.25rem; }
-
-    .spinner { width: 24px; height: 24px; border: 4px solid rgba(255,255,255,0.2); border-top-color: var(--text); border-radius: 50%; animation: spin 1s linear infinite; position: absolute; right: 8px; top: 36px; }
+    body {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; background: var(--bg);
+      font-family: 'Poppins', sans-serif; color: var(--text);
+      padding: 1rem;
+    }
+    .card {
+      width: 360px; background: var(--card);
+      border-radius: var(--radius); padding: 2rem;
+      box-shadow: 0 8px 16px var(--shadow);
+    }
+    h1 {
+      text-align: center; margin-bottom: 1.5rem;
+      color: var(--accent); font-weight: 600;
+    }
+    .field { margin-bottom: 1rem; }
+    label {
+      display: block; margin-bottom: 0.5rem;
+      color: var(--text-sec); font-size: 0.9rem;
+    }
+    select, input[type="text"], input[type="tel"], input[type="date"], input[type="time"] {
+      width: 100%; padding: 0.75rem;
+      border: none; border-radius: var(--radius);
+      background: rgba(255,255,255,0.05);
+      color: var(--text); font-size: 0.95rem;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    select:focus, input:focus {
+      background: rgba(255,255,255,0.1);
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    .surcharge {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .surcharge input {
+      width: auto; transform: scale(1.2);
+    }
+    .btn {
+      width: 100%; padding: 0.75rem;
+      background: var(--accent); color: var(--bg);
+      border: none; border-radius: var(--radius);
+      font-weight: 600; cursor: pointer;
+      box-shadow: 0 6px 10px var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 14px var(--shadow);
+    }
+    .btn:disabled {
+      opacity: 0.5; cursor: not-allowed;
+    }
+    #summary {
+      margin-top: 1.5rem; padding: 1rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      font-size: 0.95rem; line-height: 1.4;
+      white-space: pre-wrap;
+    }
     .hidden { display: none; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .btn { border: none; border-radius: 25px; padding: 0.75rem; background: transparent; color: var(--text); font-weight: 600; cursor: pointer; transition: box-shadow 0.3s ease; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn:hover:not(:disabled) { box-shadow: 0 0 8px #ff00cc,0 0 16px #a100ff; }
-
-    input:focus, select:focus, button:focus { outline: 2px solid #ff00cc; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
   </style>
 </head>
 <body>
-  <div class="container">
-    <nav id="lang-switch"></nav>
-    <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
-    <p id="intro-text" class="intro"></p>
-
-    <form id="booking-form" role="form" aria-labelledby="intro-text">
+  <div class="card">
+    <h1>Reserva tu Servicio</h1>
+    <form id="booking-form">
       <div class="field">
-        <label for="service-type" id="label-service"></label>
-        <select id="service-type" required aria-required="true"></select>
-        <div id="spinner" class="spinner hidden" aria-hidden="true"></div>
+        <label for="service">Servicio</label>
+        <select id="service" required>
+          <option value="" disabled selected>-- Elige Servicio --</option>
+          <option value="Cortar">Cortar - 12,00€</option>
+          <option value="Tinte">Tinte desde 10,00€</option>
+          <option value="Mechas">Mechas desde 10,00€</option>
+          <option value="Afeitar">Afeitar - 8,00€</option>
+          <option value="Alisado">Alisado desde 10,00€</option>
+          <option value="Niños">Niños - 10,00€</option>
+        </select>
       </div>
       <div class="field">
-        <label for="datetime" id="label-datetime"></label>
-        <input type="datetime-local" id="datetime" required aria-required="true" />
+        <label for="date">Fecha</label>
+        <input type="date" id="date" required min="" />
       </div>
       <div class="field">
-        <label for="address" id="label-address"></label>
-        <input type="text" id="address" placeholder="Calle, número, ciudad" required aria-required="true" data-tooltip="Dirección completa para el servicio" />
-        <span class="tooltip" id="tip-address"></span>
+        <label for="time">Hora</label>
+        <input type="time" id="time" required min="09:00" max="22:00" step="900" />
       </div>
       <div class="field">
-        <label for="phone" id="label-phone"></label>
-        <input type="tel" id="phone" placeholder="+34 600 000 000" required aria-required="true" data-tooltip="Formato: +34 600000000" />
-        <span class="tooltip" id="tip-phone"></span>
+        <label for="name">Nombre</label>
+        <input type="text" id="name" placeholder="Tu nombre" required />
       </div>
       <div class="field">
-        <label for="notes" id="label-notes"></label>
-        <textarea id="notes" aria-label="Additional notes"></textarea>
+        <label for="phone">Teléfono</label>
+        <input type="tel" id="phone" placeholder="+34 600 000 000" required />
       </div>
-
-      <button type="button" id="save-fav" class="btn" disabled></button>
-      <button type="submit" id="submit-btn" class="btn" disabled></button>
-      <p id="status-msg" aria-live="polite"></p>
+      <div class="field surcharge">
+        <input type="checkbox" id="plus-travel" />
+        <label for="plus-travel">Plus desplazamiento (+5,00€)</label>
+      </div>
+      <button type="submit" class="btn" id="btn-generate">Ver Resumen</button>
     </form>
-
-    <footer>
-      <p id="help-text"></p>
-      <p id="disclaimer-text"></p>
-    </footer>
+    <div id="summary" class="hidden"></div>
+    <button id="btn-send" class="btn hidden">Enviar por WhatsApp</button>
   </div>
 
   <script>
-  (function() {
-    const translations = {
-      EN: {
-        intro: "Mobile barber services, book at home easily.",
-        labels: { service: "Service", datetime: "Date & Time", address: "Address", phone: "Phone Number", notes: "Notes (optional)" },
-        placeholders: { service: "-- Choose Service --" },
-        services: ["Haircut","Beard Trim","Full Grooming","Kids Cut"],
-        submit: "Book Now",
-        saveFav: "Save Favorite",
-        help: "Need help? Contact us →",
-        disclaimer: "Booking pending confirmation by phone."
-      },
-      ES: {
-        intro: "Servicio de barbero a domicilio, reserva fácilmente.",
-        labels: { service: "Servicio", datetime: "Fecha y Hora", address: "Dirección", phone: "Teléfono", notes: "Notas (opcional)" },
-        placeholders: { service: "-- Elige Servicio --" },
-        services: ["Corte de Cabello","Recorte de Barba","Afeitado Completo","Corte Infantil"],
-        submit: "Reservar",
-        saveFav: "Guardar Favorito",
-        help: "¿Necesitas ayuda? Contáctanos →",
-        disclaimer: "Reserva pendiente de confirmación telefónica."
-      }
-    };
-    const phoneRegex = /^\+34\s?\d{9}$/;
-    const whatsapp = "+34644075065";
+    // Inicializar fecha mínima a hoy
+    const dateInput = document.getElementById('date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
 
-    const el = {
-      langSwitch: document.getElementById('lang-switch'), themeToggle: document.getElementById('theme-toggle'),
-      intro: document.getElementById('intro-text'),
-      labels: { service: document.getElementById('label-service'), datetime: document.getElementById('label-datetime'), address: document.getElementById('label-address'), phone: document.getElementById('label-phone'), notes: document.getElementById('label-notes') },
-      service: document.getElementById('service-type'), spinner: document.getElementById('spinner'), datetime: document.getElementById('datetime'), address: document.getElementById('address'), tipAddress: document.getElementById('tip-address'), phone: document.getElementById('phone'), tipPhone: document.getElementById('tip-phone'), notes: document.getElementById('notes'),
-      saveFav: document.getElementById('save-fav'), submitBtn: document.getElementById('submit-btn'), statusMsg: document.getElementById('status-msg'),
-      help: document.getElementById('help-text'), disclaimer: document.getElementById('disclaimer-text'), form: document.getElementById('booking-form')
-    };
+    // Precios base
+    const priceMap = { Cortar:12, Tinte:10, Mechas:10, Afeitar:8, Alisado:10, "Niños":10 };
+    const form = document.getElementById('booking-form');
+    const btnGenerate = document.getElementById('btn-generate');
+    const btnSend = document.getElementById('btn-send');
+    const summaryEl = document.getElementById('summary');
+    const serviceEl = document.getElementById('service');
+    const nameEl = document.getElementById('name');
+    const phoneEl = document.getElementById('phone');
+    const plusTravel = document.getElementById('plus-travel');
+    const timeEl = document.getElementById('time');
 
-    let lang = localStorage.getItem('lang')||'EN';
-    let fav = JSON.parse(localStorage.getItem('fav')||'null');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const service = serviceEl.value;
+      const date = dateInput.value;
+      const time = timeEl.value;
+      const name = nameEl.value.trim();
+      const phone = phoneEl.value.trim();
+      const plus = plusTravel.checked;
+      let price = priceMap[service] || 0;
+      if (plus) price += 5;
 
-    function init(){
-      Object.keys(translations).forEach(code=>{
-        const btn=document.createElement('button');btn.textContent=code;btn.className='lang-btn';btn.addEventListener('click',()=>setLang(code));el.langSwitch.appendChild(btn);
-      });
-      el.service.addEventListener('change',renderServices);
-      el.form.addEventListener('input',validateForm);
-      el.form.addEventListener('submit',onSubmit);
-      el.saveFav.addEventListener('click',saveFavorite);
-      el.address.addEventListener('focus',()=>el.tipAddress.textContent=el.address.dataset.tooltip);el.address.addEventListener('blur',()=>el.tipAddress.textContent='');
-      el.phone.addEventListener('focus',()=>el.tipPhone.textContent=el.phone.dataset.tooltip);el.phone.addEventListener('blur',()=>el.tipPhone.textContent='');el.phone.addEventListener('input',validatePhone);
-      el.themeToggle.addEventListener('click',toggleTheme);
-      applyLang(lang);
-      applyTheme(localStorage.getItem('theme')||'dark');
-      if(fav) fillFavorite();
-    }
+      const summary =
+`Resumen de la Reserva:
+- Servicio: ${service}
+- Fecha: ${date}
+- Hora: ${time}
+- Desplazamiento: ${plus ? 'Sí (+5,00€)' : 'No'}
+- Precio estimado: ${price.toFixed(2)}€
+- Nombre: ${name}
+- Teléfono: ${phone}`;
+      summaryEl.textContent = summary;
+      summaryEl.classList.remove('hidden');
+      btnSend.classList.remove('hidden');
+    });
 
-    function setLang(l){localStorage.setItem('lang',l);applyLang(l);}    
-    function applyLang(l){lang=l;const t=translations[l];document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l));el.intro.textContent=t.intro;el.labels.service.textContent=t.labels.service;el.labels.datetime.textContent=t.labels.datetime;el.labels.address.textContent=t.labels.address;el.labels.phone.textContent=t.labels.phone;el.labels.notes.textContent=t.labels.notes;renderSelect(el.service,t.placeholders.service,t.services);el.submitBtn.textContent=t.submit;el.saveFav.textContent=t.saveFav;el.help.innerHTML=`<a href="https://wa.me/${whatsapp}" target="_blank">${t.help}</a>`;el.disclaimer.textContent=t.disclaimer;validateForm();}
-    function renderSelect(select,placeholder,opts){select.innerHTML=`<option value="" disabled selected>${placeholder}</option>`;opts.forEach(o=>{const e=document.createElement('option');e.value=o;e.textContent=o;e.selected=false;select.appendChild(e)});}
-    function renderServices(){el.spinner.classList.remove('hidden');setTimeout(()=>{renderSelect(el.service,translations[lang].placeholders.service,translations[lang].services);el.spinner.classList.add('hidden');validateForm();},300);}    
-    function validatePhone(){const ok=phoneRegex.test(el.phone.value);el.phone.setCustomValidity(ok?'':'Formato: +34 9 dígitos');validateForm();}
-    function validateForm(){const ok=el.service.value&&el.datetime.value&&el.address.value&&el.phone.checkValidity();el.submitBtn.disabled=!ok;el.saveFav.disabled=!ok;}    
-    function onSubmit(e){e.preventDefault();el.statusMsg.textContent=translations[lang].submit===el.submitBtn.textContent?'Enviando reserva…':'Booking…';const msg=`Servicio: ${el.service.value}. Fecha/Hora: ${el.datetime.value}. Dirección: ${el.address.value}. Teléfono: ${el.phone.value}. Notas: ${el.notes.value||'-'}.`;window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`,'_blank');setTimeout(()=>{el.statusMsg.textContent=translations[lang].submit===el.submitBtn.textContent?'Reserva enviada con éxito':'Booked successfully';},500);}    
-    function toggleTheme(){const next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';applyTheme(next);}    
-    function applyTheme(theme){document.documentElement.setAttribute('data-theme',theme);localStorage.setItem('theme',theme);}    
-    function saveFavorite(){const f={service:el.service.value,datetime:el.datetime.value,address:el.address.value};localStorage.setItem('fav',JSON.stringify(f));el.statusMsg.textContent='Favorito guardado';}
-    function fillFavorite(){el.service.value=fav.service;renderServices();setTimeout(()=>{el.datetime.value=fav.datetime;el.address.value=fav.address;validateForm();},350);}    
-    document.addEventListener('DOMContentLoaded',init);
-  })();
+    btnSend.addEventListener('click', () => {
+      const phone = phoneEl.value.replace(/\s+/g, '');
+      const text = encodeURIComponent(summaryEl.textContent);
+      window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    });
   </script>
 </body>
 </html>
